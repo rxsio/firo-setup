@@ -1,0 +1,1 @@
+openssl req -x509 -new -sha256 -days 1460 -newkey rsa:4096 -keyout certificates/RootCA.key -out certificates/RootCA.pem -subj "/C=PL/ST=Masovian Voivodeship/L=Warsaw/O=rxsio/CN=rxsio/emailAddress=admin@rxsio.com"

@@ -1,0 +1,25 @@
+services:
+  interface:
+    image: ghcr.io/rxsio/robot-web-interface:nightly
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - 'true'
+    volumes:
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
+  cameras:
+    image: ghcr.io/rxsio/webrtc-camera-server:nighly
+    restart: unless-stopped
+    ports:
+      - 8443:8443
+    environment:
+      - 'true'
+    privileged: true
+    volumes:
+      - '/run/udev:/run/udev:ro'
+      - '/dev:/dev'
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
