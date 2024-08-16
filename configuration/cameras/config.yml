@@ -1,13 +1,1 @@
-cameras:
-  pci-0000:00:14.0-usb-0:5:1.0:
-    name: "Back view"
-    protocol: h264
-    width: 1920
-    height: 1080
-    framerate: 30
-  pci-0000:00:14.0-usb-0:6:1.0:
-    name: "Side view"
-    protocol: h264
-    width: 1920
-    height: 1080
-    framerate: 30
+cameras: []
