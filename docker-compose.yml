@@ -10,6 +10,7 @@ services:
     volumes:
       - '/certificates:/certificates'
       - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
   cameras:
     image: ghcr.io/rxsio/webrtc-camera-server:nightly
     restart: unless-stopped
@@ -23,3 +24,4 @@ services:
       - '/dev:/dev'
       - '/certificates:/certificates'
       - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
