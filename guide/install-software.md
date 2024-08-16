@@ -3,6 +3,7 @@
 ## Prepare the working directory
 ```sh
 sudo mkdir /rover
+sudo mkdir /rover/exchange
 cd /rover
 ```
 
