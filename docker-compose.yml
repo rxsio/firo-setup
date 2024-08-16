@@ -11,7 +11,7 @@ services:
       - '/certificates:/certificates'
       - '/rover/configuration:/configuration'
   cameras:
-    image: ghcr.io/rxsio/webrtc-camera-server:nighly
+    image: ghcr.io/rxsio/webrtc-camera-server:nightly
     restart: unless-stopped
     ports:
       - 8443:8443

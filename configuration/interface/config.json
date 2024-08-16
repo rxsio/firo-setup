@@ -4,7 +4,14 @@
         "certificate": "/certificates/firo.crt",
         "root": "/certificates/RootCA.pem"
     },
-    "mounts": [],
+    "mounts": [
+        {
+            "name": "static",
+            "type": "SPA",
+            "path": "/",
+            "directory": "../dist"
+        }
+    ],
     "origins": [
         "http://localhost",
         "https://localhost",
