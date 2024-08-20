@@ -4,6 +4,11 @@
         "certificate": "/certificates/firo.crt",
         "root": "/certificates/RootCA.pem"
     },
+    "turn": {
+        "url": "<URL> {TURN_TOKEN}",
+        "turnToken": "<TURN_TOKEN>",
+        "apiToken": "<API_TOKEN>"
+    }
     "mounts": [
         {
             "name": "static",
