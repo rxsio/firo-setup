@@ -29,6 +29,12 @@ properties:
       This certificate is used to secure communications between the server and clients.
     example: /certs/custom.crt
 
+  certificateCA: 
+    type: string
+    description: |
+      The file path to the SSL/TLS root certitifcate used to sign signalling server certificate.
+    example: /certs/RootCA.pem
+
   certificatePassword:
     type: string
     description: |
