@@ -1,0 +1,80 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+title: Interface
+description: |
+  Configuration schema for the backend server interface. This object defines 
+  the settings and parameters required to configure the server's mount points, 
+  certificates and CORS settings.
+type: object
+properties:
+  ssl:
+    type: object
+    description: Specifies the SSL configuration settings for secure connections.
+    properties:
+      key:
+        type: string
+        description: The file path to the SSL certificate key.
+        example: /certs/custom.key
+
+      certificate:
+        type: string
+        description: The file path to the SSL certificate.
+        example: /certs/custom.crt
+
+      root:
+        type: string
+        description: The file path to the root CA certificate.
+        example: /certs/root.pem
+
+    required: ["key", "certificate", "root"]
+
+  mounts:
+    type: array
+    description: |
+      A list of paths to be mounted on the server. The order of the paths should 
+      be from the most specific to the most general.
+    minItems: 0
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Specifies the name of the mount point.
+          example: static
+
+        type:
+          type: string
+          enum: ["SPA", "FTP", "PAGE"]
+          description: Defines the type of the mount.
+          example: "SPA"
+
+        path:
+          type: string
+          description: Specifies the path on the server where the mount point will be located.
+          example: "/docs"
+
+        directory:
+          type: string
+          description: Indicates the directory on the local filesystem to be mounted at the specified path.
+          example: "../dist/docs"
+
+      required: ["name", "type", "path", "directory"]
+
+  origins:
+    type: array
+    description: |
+      A list of allowed page origins for CORS (Cross-Origin Resource Sharing) 
+      configuration. Each origin must be unique within the list.
+    minItems: 0
+    uniqueItems: true
+    items:
+      type: string
+      description:
+        Specifies an allowed origin for CORS. This should be a fully qualified
+        URL, including the scheme (e.g., "http://").
+      example: "http://localhost"
+
+required:
+  - ssl
+  - mounts
+  - origins

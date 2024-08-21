@@ -1,0 +1,33 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+title: TURN Configuration
+description: |
+  Schema for configuring TURN (Traversal Using Relays around NAT) servers. 
+  This object includes settings necessary for enabling and managing TURN 
+  services, including server addresses, authentication credentials, and 
+  other related parameters.
+type: object
+properties:
+  enable:
+    type: boolean
+    description: Determines whether the feature is active. This field must be specified.
+    example: true
+    default: false
+
+  url:
+    type: string
+    description: Specifies the API endpoint. The URL may include the placeholder {TURN_TOKEN}, which will be dynamically replaced at runtime.
+    example: "https://api.example.com/endpoint/{TURN_TOKEN}"
+
+  apiToken:
+    type: string
+    description: Provides the API token used to authenticate requests to the endpoint.
+    example: "abcd1234efgh5678ijkl"
+
+  turnToken:
+    type: string
+    description: Represents the TURN token utilized for URL substitution and authentication purposes.
+    example: "turn1234token5678"
+
+required: 
+  - enable

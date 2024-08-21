@@ -1,0 +1,41 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+title: Signaller
+description: |
+  Configuration schema for the signalling server. This object includes settings 
+  related to the server's address, port, and security certificates.
+
+type: object
+properties:
+  host:
+    type: string
+    description: |
+      The hostname or IP address of the signalling server. 
+      This is where the server will listen for incoming connections.
+    example: "localhost"
+  
+  port:
+    type: integer
+    description: |
+      The port number on which the signalling server will listen.
+    minimum: 0
+    maximum: 65535
+    example: 8443
+  
+  certificate:
+    type: string
+    description: |
+      The file path to the SSL/TLS certificate used by the signalling server. 
+      This certificate is used to secure communications between the server and clients.
+    example: /certs/custom.crt
+
+  certificatePassword:
+    type: string
+    description: |
+      The password for the SSL/TLS certificate, if applicable. 
+      This password is used to unlock the certificate for use by the server.
+    example: "1234"
+
+required:
+  - host
+  - port

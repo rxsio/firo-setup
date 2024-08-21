@@ -1,0 +1,46 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+title: Cameras
+description: Configuration schema for camera settings.
+type: object
+properties:
+  cameras:
+    type: object
+    description: A map of camera identifiers to their configuration settings.
+    additionalProperties:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name or identifier of the camera.
+          example: front_platform
+        protocol:
+          type: string
+          description: The video protocol used by the camera.
+          enum:
+            - h264
+            - mjpeg
+          example: h264
+        width:
+          type: integer
+          description: The width of the video frame in pixels.
+          minimum: 1
+          example: 1920
+        height:
+          type: integer
+          description: The height of the video frame in pixels.
+          minimum: 1
+          example: 1080
+        framerate:
+          type: integer
+          description: The frame rate of the video in frames per second.
+          minimum: 1
+          example: 60
+      required:
+        - name
+        - protocol
+        - width
+        - height
+        - framerate
+  required:
+    - cameras

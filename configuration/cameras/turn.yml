@@ -1,3 +1,0 @@
-url: "example.com{TURN_TOKEN}"
-apiToken: "<API_TOKEN>"
-turnToken: "<TURN_TOKEN>"
