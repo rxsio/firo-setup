@@ -1,5 +1,7 @@
 # Setup Software
 
+- script available at: `/scripts/install-software.sh`
+
 ## Prepare the working directory
 ```sh
 sudo mkdir /rover

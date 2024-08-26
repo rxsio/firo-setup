@@ -1,13 +1,13 @@
-
 # Computer Setup
 
-## Bios Setup
-1. Enable AC Power Recovery in the settings to `On`
-2. Enable RTC Alarm
-    - set to 0:00 daily
+## Requirements 
+1. x86 architecture 
+2. `>=`50GB disk space
+3. `>=` 16GB RAM
+4. Wi-Fi / Wi-Fi Adapter for communication
+5. AC Power Recovery (recommended)
 
-## Installing OS
-1. Prepare USB stick
-2. Mount USB stick in computer
-3. Install Ubuntu OS on the computer
-4. Follow next steps
+## BIOS Configuration
+1. Enable AC Power Recovery in the settings to `On` (if possible)
+2. Enable RTC Alarm (if possible)
+    - set to 0:00 daily
