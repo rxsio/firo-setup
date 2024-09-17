@@ -25,3 +25,16 @@ services:
       - '/certificates:/certificates'
       - '/rover/configuration:/configuration'
       - '/rover/exchange:/exchange'
+  ros:
+    image: ghcr.io/rxsio/firo_robot:humble
+    restart: unless-stopped
+    network_mode: host
+    ipc: host
+    privileged: true # This is intentional
+    command: 'ros2 launch firo_bringup firo_bringup.launch '
+    volumes:
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
+    devices:
+      - '/dev:/dev'
