@@ -25,3 +25,15 @@ services:
       - '/certificates:/certificates'
       - '/rover/configuration:/configuration'
       - '/rover/exchange:/exchange'
+  ros:
+    image: ghcr.io/rxsio/firo_robot:humble
+    restart: unless-stopped
+    network_mode: host
+    ipc: host
+    privileged: true # This is intentional
+    volumes:
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
+    devices:
+      - '/dev:/dev'
