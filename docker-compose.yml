@@ -31,7 +31,6 @@ services:
     network_mode: host
     ipc: host
     privileged: true # This is intentional
-    command: 'ros2 launch firo_bringup firo_bringup.launch '
     volumes:
       - '/certificates:/certificates'
       - '/rover/configuration:/configuration'
