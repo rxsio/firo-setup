@@ -1,0 +1,71 @@
+configs:
+  traefik.yaml:
+    file: ./traefik.yaml
+  traefik_dynamic.yaml:
+    file: ./traefik_dynamic.yaml
+services:
+  traefik:
+    image: traefik:v3.3
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /certificates:/certificates
+    configs:
+      - traefik.yaml
+      - traefik_dynamic.yaml
+  interface:
+    image: ghcr.io/rxsio/robot-web-interface:nightly
+    restart: unless-stopped
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
+    environment:
+      - 'true'
+    volumes:
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.interface_http.rule=Host(`${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.interface_http.entrypoints=web"
+      - "traefik.http.routers.interface_https.rule=Host(`${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.interface_https.entrypoints=websecure"
+      - "traefik.http.routers.interface_https.tls={}"
+  cameras:
+    image: ghcr.io/rxsio/webrtc-camera-server:nightly
+    restart: unless-stopped
+    network_mode: host # Required to expose wide range of ephemeral ports for WebRTC
+    environment:
+      - 'true'
+    privileged: true
+    volumes:
+      - '/run/udev:/run/udev:ro'
+      - '/dev:/dev'
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webrtc_signaling.rule=Host(`webrtc.${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.webrtc_signaling.entrypoints=websecure"
+      - "traefik.http.routers.webrtc_signaling.tls={}"
+  ros:
+    image: ghcr.io/rxsio/firo_robot:humble
+    restart: unless-stopped
+    network_mode: host
+    ipc: host
+    privileged: true # This is intentional
+    volumes:
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
+    devices:
+      - '/dev:/dev'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ros_http.rule=Host(`ros.${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.ros_http.entrypoints=websecure"
+      - "traefik.http.routers.ros_http.tls={}"

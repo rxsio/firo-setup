@@ -1,0 +1,4 @@
+tls:
+  certificates:
+    - certFile: /certificates/firo.crt
+      keyFile: /certificates/firo.key
