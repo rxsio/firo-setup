@@ -31,9 +31,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.interface_http.rule=Host(`${ROBOT_ID}.rxsio.com`)"
       - "traefik.http.routers.interface_http.entrypoints=web"
+      - "traefik.http.routers.interface_http.service=interface_80"
       - "traefik.http.routers.interface_https.rule=Host(`${ROBOT_ID}.rxsio.com`)"
       - "traefik.http.routers.interface_https.entrypoints=websecure"
+      - "traefik.http.routers.interface_https.service=interface_443"
       - "traefik.http.routers.interface_https.tls={}"
+      - "traefik.http.services.interface_80.loadbalancer.server.port=80"
+      - "traefik.http.services.interface_443.loadbalancer.server.port=443"
   cameras:
     image: ghcr.io/rxsio/webrtc-camera-server:nightly
     restart: unless-stopped
@@ -51,7 +55,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.webrtc_signaling.rule=Host(`webrtc.${ROBOT_ID}.rxsio.com`)"
       - "traefik.http.routers.webrtc_signaling.entrypoints=websecure"
+      - "traefik.http.routers.webrtc_signaling.service=webrtc_8082"
       - "traefik.http.routers.webrtc_signaling.tls={}"
+      - "traefik.http.services.webrtc_8082.loadbalancer.server.port=8082"
   ros:
     image: ghcr.io/rxsio/firo_robot:humble
     restart: unless-stopped
@@ -69,3 +75,4 @@ services:
       - "traefik.http.routers.ros_http.rule=Host(`ros.${ROBOT_ID}.rxsio.com`)"
       - "traefik.http.routers.ros_http.entrypoints=websecure"
       - "traefik.http.routers.ros_http.tls={}"
+      - "traefik.http.services.ros_8081.loadbalancer.server.port=8081"
