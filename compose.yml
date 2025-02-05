@@ -11,7 +11,7 @@ services:
       - 80:80
       - 443:443
     secrets:
-      - acme
+      - cf_token
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /secrets/acme.json:/acme.json
