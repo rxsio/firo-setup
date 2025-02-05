@@ -2,8 +2,8 @@ configs:
   traefik.yaml:
     file: ./traefik.yaml
 secrets:
-  acme:
-    file: /secrets/acme.json
+  cf_token:
+    file: /secrets/cf_token
 services:
   traefik:
     image: traefik:v3.3
@@ -14,7 +14,7 @@ services:
       - acme
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /secrets/cf_token:/acme.json
+      - /secrets/acme.json:/acme.json
     configs:
       - traefik.yaml
     environment:
