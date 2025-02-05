@@ -1,8 +1,6 @@
 providers:
   docker:
     exposedByDefault: false
-  file:
-    filename: /traefik_dynamic.yaml
 entryPoints:
   web:
     address: :80
@@ -13,9 +11,17 @@ entryPoints:
     #       scheme: https
   websecure:
     address: :443
-    asDefault:
-      true
-      tls: {}
-serversTransport:
-  rootCAs:
-    filename: /certificates/RootCA.pem
+    asDefault: true
+    http:
+      tls:
+        certResolver: le
+api:
+  dashboard: true
+certificatesResolvers:
+  le:
+    acme:
+      email: firo2@rxsio.com
+      storage: /acme.json
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      dnsChallenge:
+        provider: cloudflare
