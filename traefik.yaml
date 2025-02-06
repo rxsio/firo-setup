@@ -1,0 +1,25 @@
+providers:
+  docker:
+    exposedByDefault: false
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: :443
+    asDefault: true
+    http:
+      tls:
+        certResolver: le
+api:
+  dashboard: true
+certificatesResolvers:
+  le:
+    acme:
+      storage: /acme.json
+      dnsChallenge:
+        provider: cloudflare

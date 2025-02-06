@@ -1,0 +1,81 @@
+configs:
+  traefik.yaml:
+    file: ./traefik.yaml
+secrets:
+  cf_token:
+    file: /secrets/cf_token
+services:
+  traefik:
+    image: traefik:v3.3
+    ports:
+      - 80:80
+      - 443:443
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    secrets:
+      - cf_token
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /secrets/acme.json:/acme.json
+    configs:
+      - traefik.yaml
+    environment:
+      - CF_DNS_API_TOKEN_FILE=/run/secrets/cf_token
+    command: --certificatesresolvers.le.acme.email=${ROBOT_ID}@rxsio.com
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.api.entrypoints=websecure
+      - traefik.http.routers.api.rule=Host(`traefik.${ROBOT_ID}.rxsio.com`)
+      - traefik.http.routers.api.service=api@internal
+  interface:
+    image: ghcr.io/rxsio/robot-web-interface:nightly
+    restart: unless-stopped
+    volumes:
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.interface_http.entrypoints=web"
+      - "traefik.http.routers.interface_http.rule=Host(`${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.interface_http.service=interface_80"
+      - "traefik.http.routers.interface_https.rule=Host(`${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.interface_https.entrypoints=websecure"
+      - "traefik.http.routers.interface_https.service=interface_443"
+      - "traefik.http.services.interface_80.loadbalancer.server.port=80"
+      - "traefik.http.services.interface_443.loadbalancer.server.port=443"
+  cameras:
+    image: ghcr.io/rxsio/webrtc-camera-server:nightly
+    restart: unless-stopped
+    network_mode: host # Required to expose wide range of ephemeral ports for WebRTC
+    environment:
+      - 'true'
+    privileged: true
+    volumes:
+      - '/run/udev:/run/udev:ro'
+      - '/dev:/dev'
+      - '/certificates:/certificates'
+      - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webrtc_signaling.rule=Host(`webrtc.${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.webrtc_signaling.entrypoints=websecure"
+      - "traefik.http.routers.webrtc_signaling.service=webrtc_8082"
+      - "traefik.http.services.webrtc_8082.loadbalancer.server.port=8082"
+  ros:
+    image: ghcr.io/rxsio/firo_robot:humble
+    restart: unless-stopped
+    network_mode: host
+    ipc: host
+    privileged: true # This is intentional
+    volumes:
+      - '/rover/configuration:/configuration'
+      - '/rover/exchange:/exchange'
+    devices:
+      - '/dev:/dev'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ros_http.rule=Host(`ros.${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.ros_http.entrypoints=websecure"
+      - "traefik.http.services.ros_8081.loadbalancer.server.port=8081"
