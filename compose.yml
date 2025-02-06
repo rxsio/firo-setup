@@ -21,6 +21,7 @@ services:
       - traefik.yaml
     environment:
       - CF_DNS_API_TOKEN_FILE=/run/secrets/cf_token
+    command: --certificatesresolvers.le.acme.email=${ROBOT_ID}@rxsio.com
     labels:
       - traefik.enable=true
       - traefik.http.routers.api.entrypoints=websecure

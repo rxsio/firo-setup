@@ -20,7 +20,6 @@ api:
 certificatesResolvers:
   le:
     acme:
-      email: firo2@rxsio.com
       storage: /acme.json
       dnsChallenge:
         provider: cloudflare
