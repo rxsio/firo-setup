@@ -22,6 +22,5 @@ certificatesResolvers:
     acme:
       email: firo2@rxsio.com
       storage: /acme.json
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       dnsChallenge:
         provider: cloudflare
