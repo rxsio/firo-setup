@@ -74,6 +74,8 @@ services:
       - '/rover/exchange:/exchange'
     devices:
       - '/dev:/dev'
+    environment:
+      - ROS_LOCALHOST_ONLY=1
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ros_http.rule=Host(`ros.${ROBOT_ID}.rxsio.com`)"
