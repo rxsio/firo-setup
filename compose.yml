@@ -82,3 +82,62 @@ services:
       - "traefik.http.routers.ros_http.rule=Host(`ros.${ROBOT_ID}.rxsio.com`)"
       - "traefik.http.routers.ros_http.entrypoints=websecure"
       - "traefik.http.services.ros_8081.loadbalancer.server.port=8081"
+  influx:
+    image: influxdb:latest
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:8086:8086
+    volumes:
+      - /rover/data/influxdb-data:/var/lib/influxdb2:rw
+      - /rover/data/influxdb-config:/etc/influxdb2:rw
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.influx.rule=Host(`influx.${ROBOT_ID}.rxsio.com`)"
+      - "traefik.http.routers.influx.entrypoints=websecure"
+      - "traefik.http.routers.influx.service=influx_8086"
+      - "traefik.http.services.influx_8086.loadbalancer.server.port=8086"
+  telegraf:
+    image: telegraf:1.25-alpine
+    restart: unless-stopped
+    depends_on:
+      - influx
+    network_mode: host # This is intentional: required for wireless network telemetry
+    volumes:
+      - /rover/configuration/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /sys:/host_sys:ro
+      - /:/hostfs:ro
+    env_file:
+      - /rover/influx.env
+  influx_server:
+    image: influxdb:latest
+    restart: unless-stopped
+    volumes:
+      - /rover/server/influxdb-data:/var/lib/influxdb2:rw
+      - /rover/server/influxdb-config:/etc/influxdb2:rw
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.influx_server.rule=Host(`influx.rxsio.com`)"
+      - "traefik.http.routers.influx_server.entrypoints=websecure"
+      - "traefik.http.routers.influx_server.service=influx_server_8086"
+      - "traefik.http.services.influx_server_8086.loadbalancer.server.port=8086"
+  grafana_server:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_DASHBOARDS_MIN_REFRESH_INTERVAL=200ms
+    volumes:
+      - /rover/server/grafana-data:/var/lib/grafana:rw
+    restart: unless-stopped
+    user: "0"
+    depends_on:
+      - influx_server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.rxsio.com`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.service=grafana_3000"
+      - "traefik.http.services.grafana_3000.loadbalancer.server.port=3000"
