@@ -1,0 +1,5 @@
+user ros
+topic readwrite #
+
+user radcon
+pattern readwrite %c/#

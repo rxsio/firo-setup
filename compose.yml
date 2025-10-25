@@ -4,6 +4,11 @@ configs:
 secrets:
   cf_token:
     file: /secrets/cf_token
+  mqtt_password:
+    file: /secrets/mqtt_password
+volumes:
+  mosquitto_data:
+
 services:
   traefik:
     image: traefik:v3.3
@@ -141,3 +146,29 @@ services:
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.service=grafana_3000"
       - "traefik.http.services.grafana_3000.loadbalancer.server.port=3000"
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:1883:1883
+    volumes:
+      - ./configuration/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./configuration/mosquitto/acl:/etc/mosquitto/acl:ro
+      - mosquitto_log:/mosquitto/log
+    secrets:
+      - mqtt_password
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.services.mosquitto_1883.loadbalancer.servers.address=127.0.0.1:1883"
+      - "traefik.tcp.routers.mqtt.rule=HostSNI(`mqtt.${ROBOT_ID}.rxsio.com`)"
+      - "traefik.tcp.routers.mqtt.entrypoints=mqtt"
+      - "traefik.tcp.routers.mqtt.service=mosquitto_1883"
+      - "traefik.tcp.routers.mqtt.tls=true"
+  radcon:
+    image: radcon:latest
+    restart: unless-stopped
+    volumes:
+      - /dev/radcon:/dev/radcon
+    device_cgroup_rules:
+      - 'c 189:* rmw'
+    command: --host firo2 --device /dev/radcon/0 --broker tcp://127.0.0.1:1883 --persistent
